@@ -1,6 +1,6 @@
 Category
-![Category](image-3.png)
+![Category](Screenshot/image-3.png)
 Product
-![Product](image-4.png)
+![Product](Screenshot/image-4.png)
 User
-![User](image-5.png)
+![User](Screenshot/image-5.png)
