@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProductRequest extends FormRequest
+class UpdateProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -40,7 +40,7 @@ class StoreProductRequest extends FormRequest
             'price.required' => 'Harga produk wajib diisi.',
             'price.numeric' => 'Harga produk harus berupa angka.',
             'price.min' => 'Harga produk tidak boleh kurang dari 0.',
-            'user_id.required' => 'Pemilik produk wajib dipilih.', 
+            'user_id.required' => 'Pemilik produk wajib dipilih.',
             'user_id.exists' => 'Pemilih yang dipilih tidak valid.',
             'category_id.required' => 'Kategori produk wajib dipilih.',
             'category_id.exists' => 'Kategori yang dipilih tidak valid.',
