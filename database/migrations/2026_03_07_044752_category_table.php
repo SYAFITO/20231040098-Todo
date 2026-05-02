@@ -13,10 +13,22 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->timestamps();
         });
+
+        // tambahkan foreign key setelah categories ada
+        Schema::table('products', function (Blueprint $table) {
+            $table->foreign('category_id')
+                  ->references('id')
+                  ->on('categories')
+                  ->cascadeOnDelete();
+        });
     }
 
     public function down(): void
     {
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropForeign(['category_id']);
+        });
+
         Schema::dropIfExists('categories');
     }
 };

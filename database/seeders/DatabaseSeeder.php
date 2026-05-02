@@ -1,31 +1,40 @@
 <?php
 
-namespace Database\Seeders;
-
+use Illuminate\Database\Seeder;
+use App\Models\User;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\User;
-//use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    //use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
+        $admin = User::create([
             'name' => 'Ayo Belajar',
             'email' => 'belajar@example.com',
-            'password' => bcrypt('password',)
+            'password' => Hash::make('password'),
+            'role' => 'admin',
         ]);
 
-        Product::factory(20)->create();
-        Category::factory(10)->create();
+        $cat = Category::create([
+            'name' => 'Electronics'
+        ]);
+
+        Product::create([
+            'name' => 'Laptop Asus',
+            'quantity' => 5,
+            'price' => 8500000,
+            'user_id' => $admin->id,
+            'category_id' => $cat->id,
+        ]);
+
+        Product::create([
+            'name' => 'Mouse Logitech',
+            'quantity' => 20,
+            'price' => 250000,
+            'user_id' => $admin->id,
+            'category_id' => $cat->id,
+        ]);
     }
 }

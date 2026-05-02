@@ -1,34 +1,50 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // Penting untuk authorize
 
 class ProductController extends Controller
 {
+    use AuthorizesRequests; // Memastikan trait authorize bisa dipake
+
     public function index()
     {
         $products = Product::all();
-
+        $categories = Category::all(); // ✅ tambahkan ini
         return view('product.index', compact('products'));
+    }
+
+    /**
+     * Method untuk Export (Sesuai tugas Kelas B)
+     */
+    public function export()
+    {
+        // Pastikan login sebagai admin baru bisa tembus sini karena middleware Gate
+        return "Halaman Export Produk (Hanya Admin)";
     }
 
     public function create()
     {
         $users = User::orderBy('name')->get();
-        $categories = \App\Models\Category::orderBy('name')->get();
+        $categories = Category::all();
 
-        return view('product.create', compact('users', 'categories'));
+        
+        return view('product.create', compact('users','categories'));
     }
 
-    public function store(StoreProductRequest $request)
+    public function store(Request $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'quantity' => 'required|integer',
+            'price' => 'required|numeric',
+            'user_id' => 'required|exists:users,id',
+            'category_id' => 'required|exists:categories,id', 
+        ]);
 
         Product::create($validated);
 
@@ -38,26 +54,31 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::findOrFail($id);
-
         return view('product.view', compact('product'));
     }
 
     public function edit(Product $product)
     {
-        Gate::authorize('update', $product);
+        // LANGKAH 4: Cek Policy sebelum masuk halaman edit
+        $this->authorize('update', $product);
         
         $users = User::orderBy('name')->get();
-        $categories = \App\Models\Category::orderBy('name')->get();
-
-        return view('product.edit', compact('product', 'users', 'categories'));
+        return view('product.edit', compact('product', 'users'));
     }
 
-    public function update(UpdateProductRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        Gate::authorize('update', $product);
 
-        $validated = $request->validated();
+        // LANGKAH 4: Cek Policy sebelum proses update data
+        $this->authorize('update', $product);
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'quantity' => 'sometimes|integer',
+            'price' => 'sometimes|numeric',
+            'user_id' => 'sometimes|exists:users,id',
+        ]);
 
         $product->update($validated);
 
@@ -67,7 +88,9 @@ class ProductController extends Controller
     public function delete($id)
     {
         $product = Product::findOrFail($id);
-        Gate::authorize('delete', $product);
+
+        // LANGKAH 4: Cek Policy sebelum proses hapus
+        $this->authorize('delete', $product);
 
         $product->delete();
 
