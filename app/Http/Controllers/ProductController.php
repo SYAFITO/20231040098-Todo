@@ -43,7 +43,7 @@ class ProductController extends Controller
             'quantity' => 'required|integer',
             'price' => 'required|numeric',
             'user_id' => 'required|exists:users,id',
-            'category_id' => 'required|exists:categories,id', 
+            'category_id' => 'required|exists:category,id', 
         ]);
 
         Product::create($validated);
